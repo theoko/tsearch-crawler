@@ -54,6 +54,15 @@ def insert_into_mongo(sites):
                 collection.insert_one(doc_structure)
             except Exception as e:
                 print("An exception occurred ::", e)
+        collection = db.job_dates
+        try:
+            doc_structure = {
+                'job_date': job_date,
+                'total_websites': len(sites)
+            }
+            collection.insert_one(doc_structure)
+        except Exception as e:
+            print("An exception occurred ::", e)
         conn.close()
     except pymongo.errors.ConnectionFailure as e:
         print("Could not connect to MongoDB: %s" % e)
