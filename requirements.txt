@@ -1,2 +1,3 @@
 Scrapy~=2.5.0
 pymongo~=3.11.4
+Twisted~=21.2.0

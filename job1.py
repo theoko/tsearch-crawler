@@ -48,7 +48,8 @@ def insert_into_mongo(sites):
         for site in sites:
             doc_structure = {
                 'job_date': job_date,
-                'site': site
+                'site': site,
+                'job_file': 'job1.py'
             }
             try:
                 collection.insert_one(doc_structure)
@@ -58,7 +59,8 @@ def insert_into_mongo(sites):
         try:
             doc_structure = {
                 'job_date': job_date,
-                'total_websites': len(sites)
+                'total_websites': len(sites),
+                'job_file': 'job1.py'
             }
             collection.insert_one(doc_structure)
         except Exception as e:
