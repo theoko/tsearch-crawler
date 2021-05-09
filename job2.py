@@ -1,11 +1,8 @@
-import pprint
 import datetime
 
 import pymongo
 import scrapy
-from twisted.internet import reactor
-from scrapy.crawler import CrawlerRunner, CrawlerProcess
-from scrapy.utils.project import get_project_settings
+from scrapy.crawler import CrawlerProcess
 
 
 def read_from_websites():
@@ -14,10 +11,10 @@ def read_from_websites():
         conn = pymongo.MongoClient('localhost', 27017)
         db = conn.tsearch
         collection = db.job_dates
-        # pprint.pprint(collection.find_one(
-        #     sort=[('job_date', pymongo.DESCENDING)]
-        # ))
         last_date = collection.find_one(
+            {
+                'job_file': 'job1.py'  # filter for job1.py which is the job that collects the set of websites
+            },
             sort=[('job_date', pymongo.DESCENDING)]
         )
         last_date = last_date['job_date']
@@ -29,7 +26,7 @@ def read_from_websites():
         )
         url_list = []
         for website in websites:
-            url_list.append(website['site'])
+            url_list.append('https://' + website['site'])
         collection = db.job_dates
         doc_structure = {
             'job_date': job_date,
@@ -48,13 +45,34 @@ def read_from_websites():
 class EngineSpider(scrapy.Spider):
     name = "tsearchspider"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(**kwargs)
-        self.start_urls = kwargs.pop('url_list', [])
-        super(EngineSpider, *args, **kwargs)
+    def __init__(self, *a, **kw):
+        self.start_urls = kw.get('start_url')
+        super(EngineSpider, self).__init__(*a, **kw)
 
     def parse(self, response):
         crawl_date = datetime.datetime.now()
+        # *charset:
+        # meta charset=""
+        # *title:
+        # title
+        # meta property="og:title" content=""
+        # *image:
+        # meta content="" itemprop="image"
+        # meta property="og:image" content=""
+        # *description
+        # meta name="description" content=""
+        # meta name="Description" content=""
+        # meta property="og:description" content=""
+        # *keywords:
+        # meta name="keywords" content=""
+        # *theme (color):
+        # meta name="theme-color" content=""
+        # *url (to access site):
+        # meta property="og:url" content=""
+        # locale:
+        # meta property="og:locale" content=""
+        # *facebook integration:
+        # meta property="fb:app_id" content=""
         try:
             conn = pymongo.MongoClient('localhost', 27017)
             db = conn.tsearch
@@ -75,5 +93,5 @@ class EngineSpider(scrapy.Spider):
 if __name__ == "__main__":
     website_urls = read_from_websites()
     process = CrawlerProcess()
-    process.crawl(EngineSpider)
+    process.crawl(EngineSpider, start_url=website_urls)
     process.start()

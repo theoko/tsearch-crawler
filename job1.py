@@ -8,6 +8,15 @@ import pymongo
 import csv
 
 one_million_sites = "https://s3.amazonaws.com/alexa-static/top-1m.csv.zip"
+# todo: add source http://s3-us-west-1.amazonaws.com/umbrella-static/index.html
+# todo: add source https://majestic.com/reports/majestic-million
+# todo: add source https://www.quantcast.com
+# todo: add source https://tranco-list.eu
+# todo: add source https://www.similarweb.com/top-websites/
+# todo: add source https://moz.com/top-500/download/?table=top500Domains
+# todo: add source https://trends.netcraft.com/topsites
+# todo: add source https://www.domcop.com/top-10-million-websites
+# todo: add source http://commoncrawl.org
 
 
 def create_csv_dir():
@@ -32,9 +41,7 @@ def parse_top_one_million_csv(file_path):
         reader = csv.reader(csvfile)
         sites = []
         for row in reader:
-            # print(', '.join(row))
             sites.append(row[1])  # url
-            # break
         csvfile.close()
         return sites
 
