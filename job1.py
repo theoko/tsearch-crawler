@@ -52,7 +52,9 @@ def insert_into_mongo(sites):
         conn = pymongo.MongoClient('localhost', 27017)
         db = conn.tsearch
         collection = db.websites
+        site_index = 0
         for site in sites:
+            site_index += 1
             doc_structure = {
                 'job_date': job_date,
                 'site': site,
@@ -62,6 +64,8 @@ def insert_into_mongo(sites):
                 collection.insert_one(doc_structure)
             except Exception as e:
                 print("An exception occurred ::", e)
+            if site_index == 100:
+                break
         collection = db.job_dates
         try:
             doc_structure = {
